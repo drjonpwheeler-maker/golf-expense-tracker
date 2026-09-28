@@ -628,6 +628,12 @@
                     <tbody id="settlementTable"></tbody>
                 </table>
                 </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn-primary" onclick="app.exportTrip()" style="flex: 1;">📥 Export Trip</button>
+                    <button class="btn-primary" onclick="document.getElementById('importFile').click()" style="flex: 1;">📤 Import Trip</button>
+                </div>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="app.importTrip(event)">
             </div>
         </div>
 
@@ -1296,6 +1302,73 @@
                     this.expenses = data.expenses || [];
                     this.history = data.history || [];
                 }
+            },
+
+            exportTrip() {
+                if (!this.tripName || this.tripName.trim() === '') {
+                    alert('Please enter a trip name before exporting');
+                    return;
+                }
+
+                const tripData = {
+                    tripName: this.tripName,
+                    participants: this.participants,
+                    activities: this.activities,
+                    attendance: this.attendance,
+                    expenses: this.expenses,
+                    exportDate: new Date().toLocaleString(),
+                    settlement: this.calculateSettlement()
+                };
+
+                const dataStr = JSON.stringify(tripData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${this.tripName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                alert('Trip exported successfully!');
+            },
+
+            importTrip(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const tripData = JSON.parse(e.target.result);
+                        
+                        // Validate the imported data
+                        if (!tripData.tripName || !tripData.participants || !tripData.activities) {
+                            alert('Invalid trip file. Missing required data.');
+                            return;
+                        }
+
+                        // Load the trip data
+                        this.tripName = tripData.tripName;
+                        this.participants = tripData.participants || [];
+                        this.activities = tripData.activities || [];
+                        this.attendance = tripData.attendance || {};
+                        this.expenses = tripData.expenses || [];
+
+                        this.saveToStorage();
+                        this.render();
+                        
+                        alert(`Trip "${tripData.tripName}" imported successfully! Expenses: ${this.expenses.length}`);
+                        document.querySelector('[data-tab="settlement"]').click();
+                    } catch (error) {
+                        alert('Error importing trip: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+                
+                // Reset file input so same file can be imported again
+                event.target.value = '';
             }
         };
 
