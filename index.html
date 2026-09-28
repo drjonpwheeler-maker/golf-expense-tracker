@@ -527,6 +527,8 @@
                     <input type="text" id="tripName" placeholder="e.g., Golf Weekend 2026" autofocus>
                 </div>
 
+                <button class="btn-danger" onclick="if(confirm('Start a completely new trip? This will clear trip name, activities, attendance, and expenses (but keep participants).')) { app.startNewTrip(); }" style="width: 100%; margin-bottom: 20px;">Start New Trip</button>
+
                 <div class="section" style="margin-top: 30px;">
                     <div class="section-title">Define Activities</div>
                     <p style="margin-bottom: 15px; color: #666; font-size: 14px;">Create activities for this trip (e.g., "Thursday Golf", "Thursday Dinner", "Friday Lunch", etc.)</p>
@@ -540,6 +542,8 @@
                     </div>
 
                     <div id="activitiesList"></div>
+                    
+                    <button class="btn-danger" onclick="if(confirm('Clear all activities?')) { app.clearActivities(); }" style="margin-top: 15px; width: 100%;">Clear All Activities</button>
                 </div>
             </div>
         </div>
@@ -558,6 +562,8 @@
                 </div>
 
                 <div id="participantsList"></div>
+                
+                <button class="btn-danger" onclick="if(confirm('Clear all participants?')) { app.clearParticipants(); }" style="margin-top: 15px; width: 100%;">Clear All Participants</button>
             </div>
         </div>
 
@@ -597,6 +603,8 @@
             <div class="section">
                 <div class="section-title">Expenses List</div>
                 <div id="expensesList"></div>
+                
+                <button class="btn-danger" onclick="if(confirm('Clear all expenses?')) { app.clearExpenses(); }" style="margin-top: 15px; width: 100%;">Clear All Expenses</button>
             </div>
         </div>
 
@@ -1227,6 +1235,43 @@
                 this.saveToStorage();
                 this.render();
                 alert('History cleared!');
+            },
+
+            clearParticipants() {
+                this.participants = [];
+                this.attendance = {};
+                this.expenses = [];
+                this.saveToStorage();
+                this.render();
+                document.querySelector('[data-tab="participants"]').click();
+            },
+
+            clearActivities() {
+                this.activities = [];
+                this.attendance = {};
+                this.expenses = [];
+                this.saveToStorage();
+                this.render();
+                document.querySelector('[data-tab="setup"]').click();
+            },
+
+            clearExpenses() {
+                this.expenses = [];
+                this.saveToStorage();
+                this.render();
+                document.querySelector('[data-tab="expenses"]').click();
+            },
+
+            startNewTrip() {
+                this.tripName = '';
+                this.activities = [];
+                this.attendance = {};
+                this.expenses = [];
+                // Keep participants!
+                this.saveToStorage();
+                this.render();
+                document.querySelector('[data-tab="setup"]').click();
+                alert('New trip started! Participants kept.');
             },
 
             saveToStorage() {
