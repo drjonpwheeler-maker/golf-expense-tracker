@@ -244,6 +244,24 @@
             font-size: 14px;
         }
 
+        @media (max-width: 768px) {
+            .table {
+                font-size: 12px;
+            }
+            
+            .table th, .table td {
+                padding: 8px 6px;
+                white-space: nowrap;
+            }
+            
+            .settlement-table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin: -30px -30px 0 -30px;
+                padding: 0 30px;
+            }
+        }
+
         .table th {
             background: var(--primary);
             color: white;
@@ -550,18 +568,20 @@
                 <div class="section-title">Settlement Summary</div>
                 <p style="margin-bottom: 20px; color: #666; font-size: 14px;">Who owes whom</p>
                 
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Participant</th>
-                            <th style="text-align: right;">Total Spent</th>
-                            <th style="text-align: right;">Total Owed</th>
-                            <th style="text-align: right;">Balance</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
+                <div class="settlement-table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Participant</th>
+                                <th style="text-align: right;">Total Spent</th>
+                                <th style="text-align: right;">Total Owed</th>
+                                <th style="text-align: right;">Balance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
                     <tbody id="settlementTable"></tbody>
                 </table>
+                </div>
             </div>
         </div>
 
@@ -948,6 +968,7 @@
                             <div style="display: flex; align-items: center; flex: 1;">
                                 <span style="margin-right: 5px;">$</span>
                                 <input type="number" 
+                                       inputmode="decimal"
                                        data-person="${p}" 
                                        placeholder="0.00" 
                                        step="0.01" 
